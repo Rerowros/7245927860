@@ -194,24 +194,14 @@ function FeaturesSection() {
   );
 }
 
-const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void; config: any }> = ({ onBuyClick, config }) => {
+type Config = { STAR_EXCHANGE_RATE_RUB: number; TOTAL_AVAILABLE_STARS: number; MIN_STARS: number; MAX_STARS: number; };
+
+const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void; config: Config }> = ({ onBuyClick, config }) => {
   // Определяем реальное максимальное количество звёзд, которое можно выбрать
   const effectiveMaxStars = Math.min(config.MAX_STARS, config.TOTAL_AVAILABLE_STARS);
 
-  // Если доступных звёзд меньше минимально возможного, показываем сообщение
-  if (effectiveMaxStars < config.MIN_STARS) {
-    return (
-       <div className="md:col-span-2 relative flex flex-col items-center justify-center rounded-2xl border p-8 shadow-lg transition-all border-neutral-200 dark:border-neutral-800 min-h-[420px]">
-          <h3 className="text-lg text-center font-semibold leading-6 text-neutral-900 dark:text-neutral-100">Соберите свой набор</h3>
-          <p className="mt-4 text-center text-neutral-500">
-              К сожалению, на данный момент для выбора доступно менее {config.MIN_STARS} звёзд.
-          </p>
-      </div>
-    );
-  }
-
-  // Устанавливаем начальное значение, не превышающее доступное
-  const [stars, setStars] = useState(Math.min(config.MIN_STARS, effectiveMaxStars));
+  // Хуки должны быть вне условий!
+  const [stars, setStars] = useState(() => Math.min(config.MIN_STARS, effectiveMaxStars));
   const [animatedStars, setAnimatedStars] = useState(stars);
   const price = (stars * config.STAR_EXCHANGE_RATE_RUB).toFixed(2);
   const [animatedPrice, setAnimatedPrice] = useState(price);
@@ -221,11 +211,21 @@ const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void; config: any }> = 
       setAnimatedStars(stars);
       setAnimatedPrice(price);
     }, 250);
-
     return () => {
       clearTimeout(handler);
     };
   }, [stars, price]);
+
+  if (effectiveMaxStars < config.MIN_STARS) {
+    return (
+      <div className="md:col-span-2 relative flex flex-col items-center justify-center rounded-2xl border p-8 shadow-lg transition-all border-neutral-200 dark:border-neutral-800 min-h-[420px]">
+        <h3 className="text-lg text-center font-semibold leading-6 text-neutral-900 dark:text-neutral-100">Соберите свой набор</h3>
+        <p className="mt-4 text-center text-neutral-500">
+          К сожалению, на данный момент для выбора доступно менее {config.MIN_STARS} звёзд.
+        </p>
+      </div>
+    );
+  }
 
   const handleBuy = () => {
     onBuyClick({
@@ -237,14 +237,12 @@ const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void; config: any }> = 
   };
 
   const progressPercentage = effectiveMaxStars > config.MIN_STARS ? ((stars - config.MIN_STARS) / (effectiveMaxStars - config.MIN_STARS)) * 100 : 0;
-  
   const sliderStyle = {
     '--slider-progress': `${progressPercentage}%`,
     '--slider-track-bg-light': '#e5e7eb',
     '--slider-track-bg-dark': '#374151',
     '--slider-accent-color': '#2563eb',
   } as React.CSSProperties;
-
 
   return (
     <div className="md:col-span-2 relative flex flex-col rounded-2xl border-2 p-8 shadow-lg transition-all border-blue-500 ring-4 ring-blue-500/20 dark:border-blue-500">
@@ -344,7 +342,7 @@ const AnimatedStarsBackground = () => {
   return <div className="absolute inset-0 z-0 overflow-hidden">{stars}</div>;
 };
 
-function PricingSection({ onBuyClick, config }: { onBuyClick: (tier: Tier) => void, config: any }) {
+function PricingSection({ onBuyClick, config }: { onBuyClick: (tier: Tier) => void, config: Config }) {
   // ИСПРАВЛЕНО: Цены и количество звезд теперь тоже зависят от config
   const tiers: Tier[] = [
     { name: "Первый", stars: "100", price: `${(100 * config.STAR_EXCHANGE_RATE_RUB).toFixed(0)} ₽`, description: "Для разгона" },

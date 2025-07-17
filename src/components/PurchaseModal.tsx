@@ -92,9 +92,13 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
         // Пользователь не найден
         setError(`Пользователь @${username} не найден.`);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || "Произошла ошибка. Попробуйте позже.");
+      if (typeof err === "object" && err !== null && "message" in err && typeof (err as any).message === "string") {
+        setError((err as any).message || "Произошла ошибка. Попробуйте позже.");
+      } else {
+        setError("Произошла ошибка. Попробуйте позже.");
+      }
     } finally {
       setIsLoading(false);
     }
