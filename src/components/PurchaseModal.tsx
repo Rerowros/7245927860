@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, type FC, FormEvent } from "react";
+import Image from "next/image";
 import type { SVGProps } from "react";
 
 // Типы для нашего модального окна
@@ -92,9 +93,10 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
         // Пользователь не найден
         setError(`Пользователь @${username} не найден.`);
       }
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Произошла ошибка. Попробуйте позже.");
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      console.error(error);
+      setError(error.message || "Произошла ошибка. Попробуйте позже.");
     } finally {
       setIsLoading(false);
     }
@@ -156,7 +158,7 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
             {/* ШАГ 2: ПОДТВЕРЖДЕНИЕ */}
             {step === "confirm" && telegramUser && (
                 <div className="flex flex-col items-center">
-                    <img src={telegramUser.avatarUrl} alt="avatar" className="h-20 w-20 rounded-full border-2 border-blue-500"/>
+                    <Image src={telegramUser.avatarUrl} alt="avatar" width={80} height={80} className="h-20 w-20 rounded-full border-2 border-blue-500" />
                     <p className="mt-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">{telegramUser.name}</p>
                     <p className="text-neutral-500">@{telegramUser.username}</p>
                     <div className="mt-6 grid w-full grid-cols-2 gap-4">
