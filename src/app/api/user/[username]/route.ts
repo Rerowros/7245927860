@@ -15,7 +15,7 @@ let telegramClient: TelegramClient | null = null;
 
 async function getClient() {
     // 1. Если клиент уже создан и подключен, просто возвращаем его.
-    if (telegramClient && telegramClient.connected && !telegramClient.isDisconnected) {
+    if (telegramClient && telegramClient.connected && !telegramClient.disconnected) {
         console.log("Reusing existing connected Telegram client.");
         return telegramClient;
     }
@@ -46,10 +46,10 @@ async function getClient() {
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { username: string } }
+    context: { params: Promise<{ username: string }> } // params как Promise
 ) {
-    // Исправляем warning от Next.js. Просто деструктурируем params внутри функции.
-    let rawUsername = params.username;
+    // Next.js требует await для params
+    const { username: rawUsername } = await context.params;
 
     if (!rawUsername) {
         return NextResponse.json({ success: false, error: "Username is required" }, { status: 400 });
@@ -70,15 +70,14 @@ export async function GET(
                 cleanUsername = path.split('/')[0]; // Берем только первую часть пути, на случай ссылок типа t.me/channel/123
             }
         }
-    } catch (e) {
+    } catch {
         // Не URL, все в порядке.
     }
     // --- КОНЕЦ ЗАЩИТЫ ОТ ДУРАЧКА ---
 
     try {
         const client = await getClient();
-        
-        const entity = await client.getEntity(cleanUsername); 
+        const entity: Api.User | Api.Channel = await client.getEntity(cleanUsername) as Api.User | Api.Channel;
         
         let avatarUrl = `https://api.dicebear.com/8.x/initials/svg?seed=${cleanUsername}`;
         let fullName = cleanUsername;
@@ -100,17 +99,18 @@ export async function GET(
 
         return NextResponse.json({
             success: true,
-            username: (entity as any).username || cleanUsername,
+            username: 'username' in entity && typeof entity.username === 'string' ? entity.username : cleanUsername,
             exists: true,
             name: fullName,
             avatar_url: avatarUrl,
         });
 
-    } catch (error: any) {
-        console.error(`Error checking username @${cleanUsername}:`, error.message);
-        if (error.message.includes('USERNAME_NOT_OCCUPIED') || error.message.includes('No user has')) {
+    } catch (error) {
+        const err = error as Error;
+        console.error(`Error checking username @${cleanUsername}:`, err.message);
+        if (err.message.includes('USERNAME_NOT_OCCUPIED') || err.message.includes('No user has')) {
             return NextResponse.json({ success: true, username: cleanUsername, exists: false });
         }
-        return NextResponse.json({ success: false, error: error.message || "An internal error occurred" }, { status: 500 });
+        return NextResponse.json({ success: false, error: err.message || "An internal error occurred" }, { status: 500 });
     }
 }
