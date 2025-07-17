@@ -1,5 +1,4 @@
 // prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,26 +8,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Модель для хранения заказов
+// Модель для хранения настроек сайта, таких как курс обмена
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+// Статус заказа
+enum OrderStatus {
+  PENDING
+  COMPLETED
+}
+
+// Модель для хранения информации о заказах
 model Order {
-  id                String   @id @default(cuid())
-  createdAt         DateTime @default(now())
+  id                String      @id @default(cuid())
   telegramUsername  String
   telegramName      String
   telegramAvatarUrl String
   stars             Int
   price             Float
   status            OrderStatus @default(PENDING)
-}
-
-enum OrderStatus {
-  PENDING   // Не выполнен
-  COMPLETED // Выполнен
-}
-
-// Модель для хранения настроек
-model Config {
-  id                   String @id @default("main") // У нас будет только одна запись с настройками
-  starExchangeRateRub  Float  @default(1.5)
-  totalAvailableStars  Int    @default(50000)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 }

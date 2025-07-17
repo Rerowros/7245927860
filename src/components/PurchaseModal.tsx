@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, type FC, FormEvent } from "react";
-import Image from "next/image";
 import type { SVGProps } from "react";
 
 // Типы для нашего модального окна
@@ -93,28 +92,46 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
         // Пользователь не найден
         setError(`Пользователь @${username} не найден.`);
       }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      console.error(error);
-      setError(error.message || "Произошла ошибка. Попробуйте позже.");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Произошла ошибка. Попробуйте позже.");
     } finally {
       setIsLoading(false);
     }
   };
 
   // Шаг 3: Выбор способа оплаты
-  const handlePayment = async (method: "CryptoBot" | "LZT") => {
-    setIsLoading(true);
-    console.log(`User @${telegramUser?.username} chose ${method} to buy ${tier?.stars} stars.`);
-    
-    // --- СИМУЛЯЦИЯ ОТПРАВКИ УВЕДОМЛЕНИЯ АДМИНУ ---
-    // Здесь будет fetch к вашему API, который отправит сообщение в Telegram
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // --- КОНЕЦ СИМУЛЯЦИИ ---
+const handlePayment = async (method: "CryptoBot" | "LZT") => {
+  setIsLoading(true);
+  setError(null);
+
+  try {
+    const response = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tier,
+        telegramUser,
+        paymentMethod: method,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || "Не удалось создать заказ.");
+    }
     
     setIsLoading(false);
     setStep("success");
-  };
+
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Order creation failed:", error);
+    setError(error.message || "Произошла неизвестная ошибка.");
+    setIsLoading(false);
+  }
+};
   
   if (!isOpen || !tier) return null;
 
@@ -158,7 +175,7 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
             {/* ШАГ 2: ПОДТВЕРЖДЕНИЕ */}
             {step === "confirm" && telegramUser && (
                 <div className="flex flex-col items-center">
-                    <Image src={telegramUser.avatarUrl} alt="avatar" width={80} height={80} className="h-20 w-20 rounded-full border-2 border-blue-500" />
+                    <img src={telegramUser.avatarUrl} alt="avatar" className="h-20 w-20 rounded-full border-2 border-blue-500"/>
                     <p className="mt-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">{telegramUser.name}</p>
                     <p className="text-neutral-500">@{telegramUser.username}</p>
                     <div className="mt-6 grid w-full grid-cols-2 gap-4">
