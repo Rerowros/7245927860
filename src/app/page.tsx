@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, type SVGProps, FC, ReactNode, useEffect, useMemo } from "react";
+import type { JSX } from "react";
 import Link from "next/link"; // <-- ДОБАВЛЕНО
 
 import { PurchaseModal } from "@/components/PurchaseModal";
