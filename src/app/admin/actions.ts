@@ -22,7 +22,8 @@ import prisma from "@/lib/prisma";
 export async function loginAction(formData: FormData) {
   const password = formData.get("password");
   if (password === process.env.ADMIN_PASSWORD) {
-    cookies().set("admin-auth", "true", {
+    const cookieStore = await cookies();
+    cookieStore.set("admin-auth", "true", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, // 7 дней
@@ -35,7 +36,8 @@ export async function loginAction(formData: FormData) {
 }
 
 export async function logoutAction() {
-  cookies().delete("admin-auth");
+  const cookieStore = await cookies();
+  cookieStore.delete("admin-auth");
   redirect("/admin/login");
 }
 
