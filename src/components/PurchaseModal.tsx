@@ -94,8 +94,8 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
       }
     } catch (err: unknown) {
       console.error(err);
-      if (typeof err === "object" && err !== null && "message" in err && typeof (err as any).message === "string") {
-        setError((err as any).message || "Произошла ошибка. Попробуйте позже.");
+      if (err instanceof Error) {
+        setError(err.message || "Произошла ошибка. Попробуйте позже.");
       } else {
         setError("Произошла ошибка. Попробуйте позже.");
       }

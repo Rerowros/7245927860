@@ -1,0 +1,1 @@
+curl -F "url=https://YOUR_VERCEL_URL/api/telegram-webhook" https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook
