@@ -1,0 +1,34 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Модель для хранения заказов
+model Order {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  telegramUsername  String
+  telegramName      String
+  telegramAvatarUrl String
+  stars             Int
+  price             Float
+  status            OrderStatus @default(PENDING)
+}
+
+enum OrderStatus {
+  PENDING   // Не выполнен
+  COMPLETED // Выполнен
+}
+
+// Модель для хранения настроек
+model Config {
+  id                   String @id @default("main") // У нас будет только одна запись с настройками
+  starExchangeRateRub  Float  @default(1.5)
+  totalAvailableStars  Int    @default(50000)
+}

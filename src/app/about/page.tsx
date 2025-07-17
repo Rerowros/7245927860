@@ -63,24 +63,6 @@ const AnimateOnScroll = ({ children, delay = 0, className = "", as: Component = 
   );
 };
 
-// --- НОВЫЙ КОМПОНЕНТ: Анимированный фон со звёздами ---
-const AnimatedStarsBackground = () => {
-  // Создаем 40 "звёзд" с рандомными параметрами анимации
-  const stars = Array.from({ length: 40 }).map((_, i) => (
-    <div
-      key={i}
-      className="star-particle"
-      style={{
-        left: `${Math.random() * 100}%`,
-        animationDelay: `${Math.random() * 15}s`,
-        animationDuration: `${Math.random() * 10 + 10}s`,
-        transform: `scale(${Math.random() * 0.5 + 0.5})`,
-      }}
-    />
-  ));
-
-  return <div className="absolute inset-0 -z-10 overflow-hidden">{stars}</div>;
-};
 
 
 // --- Основной компонент страницы "О Звёздах" ---
@@ -106,7 +88,6 @@ export default function AboutPage() {
       {/* Оборачиваем main в relative, чтобы фон позиционировался относительно него */}
       <main className="relative flex-1 overflow-hidden">
         {/* Добавляем анимированный фон */}
-        <AnimatedStarsBackground />
         
         <div className="container mx-auto max-w-3xl px-4 py-16 sm:py-24">
           <div className="space-y-12">

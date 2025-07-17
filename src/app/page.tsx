@@ -327,23 +327,25 @@ const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void }> = ({ onBuyClick
 
 // --- НОВЫЙ КОМПОНЕНТ ДЛЯ АНИМИРОВАННОГО ФОНА ---
 const AnimatedStarsBackground = () => {
-    // useMemo, чтобы массив не создавался заново при каждом рендере
-    const stars = useMemo(() => 
-      Array.from({ length: 40 }).map((_, i) => (
-        <div
-          key={i}
-          className="star-particle"
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 15}s`,
-            animationDuration: `${Math.random() * 10 + 10}s`, // от 10 до 20 сек
-            transform: `scale(${Math.random() * 0.5 + 0.5})` // разный размер
-          }}
-        />
-      )),
-    []);
-  
-    return <div className="absolute inset-0 z-0 overflow-hidden">{stars}</div>;
+  const [stars, setStars] = useState<JSX.Element[]>([]);
+
+  useEffect(() => {
+    const arr = Array.from({ length: 40 }).map((_, i) => (
+      <div
+        key={i}
+        className="star-particle"
+        style={{
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 15}s`,
+          animationDuration: `${Math.random() * 10 + 10}s`,
+          transform: `scale(${Math.random() * 0.5 + 0.5})`
+        }}
+      />
+    ));
+    setStars(arr);
+  }, []);
+
+  return <div className="absolute inset-0 z-0 overflow-hidden">{stars}</div>;
 };
 
 

@@ -62,33 +62,42 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
     }, 300); // Даем время на анимацию закрытия
   };
 
-  // Шаг 1: Проверка username
+  // Шаг 1: Проверка username - ОБНОВЛЕННАЯ ВЕРСИЯ
   const handleUsernameSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!username) return;
     setIsLoading(true);
     setError(null);
+    setTelegramUser(null);
 
-    // --- СИМУЛЯЦИЯ ЗАПРОСА К API ---
-    // Здесь вы будете делать реальный fetch к вашему бэкенду или Telegram API
-    // Для примера, используем setTimeout
-    console.log(`Checking username: @${username}`);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Вызываем наш новый API эндпоинт
+      const response = await fetch(`/api/user/${username}`);
+      const data = await response.json();
 
-    if (username.toLowerCase() === "test_user") {
-      setTelegramUser({
-        name: "Test User",
-        username: "test_user",
-        // Используем placeholder для аватара
-        avatarUrl: `https://api.dicebear.com/8.x/initials/svg?seed=${username}`,
-      });
-      setStep("confirm");
-    } else {
-      setError("Пользователь не найден. Попробуйте 'test_user'");
+      if (!response.ok || !data.success) {
+        // Обрабатываем ошибки сервера или API
+        throw new Error(data.error || "Не удалось проверить пользователя.");
+      }
+
+      if (data.exists) {
+        // Пользователь найден, обновляем состояние
+        setTelegramUser({
+          name: data.name || "Telegram User",
+          username: data.username,
+          avatarUrl: data.avatar_url,
+        });
+        setStep("confirm");
+      } else {
+        // Пользователь не найден
+        setError(`Пользователь @${username} не найден.`);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Произошла ошибка. Попробуйте позже.");
+    } finally {
+      setIsLoading(false);
     }
-    // --- КОНЕЦ СИМУЛЯЦИИ ---
-
-    setIsLoading(false);
   };
 
   // Шаг 3: Выбор способа оплаты
