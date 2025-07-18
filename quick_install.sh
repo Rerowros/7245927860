@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Быстрая установка Docker и развертывание Telegram Bot
-# Этот скрипт объединяет установку Docker и развертывание приложения
-
 set -e
 
 # Цвета для вывода
@@ -86,7 +83,7 @@ create_user() {
 configure_app() {
     print_header "НАСТРОЙКА ПРИЛОЖЕНИЯ"
     
-    PROJECT_DIR="/home/app/telegram-bot"
+    PROJECT_DIR="/home/app/starstg"
     mkdir -p $PROJECT_DIR
     cd $PROJECT_DIR
     
@@ -159,7 +156,7 @@ EOF
     # Создаем скрипт управления
     cat > manage.sh << 'EOF'
 #!/bin/bash
-PROJECT_DIR="/home/app/telegram-bot"
+PROJECT_DIR="/home/app/starstg"
 cd $PROJECT_DIR
 
 case "$1" in
@@ -201,7 +198,7 @@ EOF
 deploy_app() {
     print_header "РАЗВЕРТЫВАНИЕ ПРИЛОЖЕНИЯ"
     
-    PROJECT_DIR="/home/app/telegram-bot"
+    PROJECT_DIR="/home/app/starstg"
     
     # Проверяем, загружены ли файлы проекта
     if [[ ! -f "$PROJECT_DIR/Dockerfile" ]]; then
@@ -248,7 +245,7 @@ setup_webhook() {
     fi
     
     # Получаем токен из .env
-    BOT_TOKEN=$(grep TELEGRAM_BOT_TOKEN /home/app/telegram-bot/.env | cut -d'=' -f2 | tr -d '"' | tr -d ' ')
+    BOT_TOKEN=$(grep TELEGRAM_BOT_TOKEN /home/app/starstg/.env | cut -d'=' -f2 | tr -d '"' | tr -d ' ')
     
     if [[ -z "$BOT_TOKEN" ]]; then
         print_error "Не удалось получить токен бота"
@@ -293,8 +290,8 @@ main() {
     
     print_header "УСТАНОВКА ЗАВЕРШЕНА"
     echo ""
-    print_status "Проект установлен в: /home/app/telegram-bot"
-    print_status "Управление: sudo -u app /home/app/telegram-bot/manage.sh {start|stop|restart|logs|status}"
+    print_status "Проект установлен в: /home/app/starstg"
+    print_status "Управление: sudo -u app /home/app/starstg/manage.sh {start|stop|restart|logs|status}"
     print_status "Приложение доступно по адресу: http://your-server-ip:3000"
     print_status "Панель администратора: http://your-server-ip:3000/admin"
     echo ""
