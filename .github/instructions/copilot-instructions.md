@@ -1,46 +1,52 @@
 # Copilot Instructions for AI Coding Agents
 
 ## Project Overview
-- This is a Next.js project (App Router, TypeScript) bootstrapped with `create-next-app`.
-- Main app code is in `src/app/` (pages, layouts, API routes).
-- UI components are in `src/components/`.
-- Business logic and integrations (e.g., Telegram) are in `src/lib/`.
-- Database schema and migrations are managed with Prisma (`prisma/schema.prisma`, `prisma/dev.db`).
+- **Framework:** Next.js (App Router, TypeScript, bootstrapped with `create-next-app`).
+- **App Structure:**
+  - Main app code: `src/app/` (pages, layouts, API routes)
+  - UI components: `src/components/`
+  - Business logic & integrations: `src/lib/`
+  - Database schema & migrations: `prisma/`
+- **Database:**
+  - Managed with Prisma (`prisma/schema.prisma`, `prisma/dev.db`)
+  - All DB access via Prisma Client (`src/lib/prisma.ts`)
 
 ## Key Workflows
 - **Development:**
-  - Start dev server: `npm run dev` (or `yarn dev`, `pnpm dev`, `bun dev`)
-  - App runs at http://localhost:3000
+  - Start dev server: `npm run dev` (http://localhost:3000)
 - **Database:**
-  - Prisma schema: `prisma/schema.prisma`
-  - Local DB: `prisma/dev.db`
-  - Use Prisma CLI for migrations and introspection
+  - Edit schema: `prisma/schema.prisma`
+  - Run migrations: `npx prisma migrate dev`
+  - Use Prisma CLI for DB tasks
 - **API Routes:**
-  - Located in `src/app/api/` (RESTful endpoints, e.g., `orders`, `webhook`)
-  - Dynamic routes use `[param]` syntax (see `orders/[id]/route.ts`)
+  - Located in `src/app/api/` (RESTful endpoints)
+  - Dynamic routes: `[param]` syntax (e.g., `orders/[id]/route.ts`)
+- **Authentication:**
+  - Admin login: `src/app/admin/login/page.tsx`
 
 ## Project Conventions
-- Use TypeScript for all code (`.ts`, `.tsx`).
-- Use Next.js App Router conventions (file-based routing, layouts, server components).
-- Place shared UI in `src/components/`.
-- Place business logic and integrations in `src/lib/`.
-- Use Prisma for all DB access; do not access SQLite directly.
-- Use environment variables for secrets and config (not checked in).
+- **TypeScript only** (`.ts`, `.tsx`)
+- **Next.js App Router**: file-based routing, layouts, server components
+- **UI:** Shared components in `src/components/`
+- **Business logic:** `src/lib/` (e.g., `telegram.ts` for Telegram integration)
+- **No direct SQLite access**; always use Prisma
+- **Secrets/config:** Use environment variables (not checked in)
 
 ## Integration Points
-- **Telegram:** Integration logic in `src/lib/telegram.ts`.
-- **Prisma:** All DB access via Prisma Client.
-- **API:** Internal API endpoints in `src/app/api/`.
+- **Telegram:** Logic in `src/lib/telegram.ts`, webhook at `src/app/api/telegram-webhook/route.ts`
+- **Prisma:** All DB access via `src/lib/prisma.ts`
+- **API:** Internal endpoints in `src/app/api/`
 
-## Examples
-- To add a new admin page: create a folder in `src/app/admin/` with a `page.tsx` file.
-- To add a new API route: add a folder/file in `src/app/api/` (see `orders/route.ts`).
-- To update DB schema: edit `prisma/schema.prisma` and run Prisma CLI.
+## Examples & Patterns
+- **Admin page:** Add folder in `src/app/admin/` with `page.tsx`
+- **API route:** Add folder/file in `src/app/api/` (see `orders/route.ts`)
+- **DB schema update:** Edit `prisma/schema.prisma`, run Prisma CLI
+- **Dynamic API route:** Use `[param]` in folder name (e.g., `user/[username]/route.ts`)
 
 ## References
-- See `README.md` for basic setup and Next.js links.
-- See `prisma/schema.prisma` for DB structure.
-- See `src/lib/telegram.ts` for external integration example.
+- `README.md`: Setup & Next.js links
+- `prisma/schema.prisma`: DB structure
+- `src/lib/telegram.ts`: External integration example
 
 ---
-If you are unsure about a pattern or workflow, prefer following the structure of existing files in the relevant directory.
+If unsure about a pattern, follow the structure of existing files in the relevant directory. Prefer explicit, readable code and match the project's established conventions.

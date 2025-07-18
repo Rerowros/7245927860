@@ -33,16 +33,35 @@ function Header() {
             О Звёздах
           </Link>
         </nav>
-        <Link
-          href="/#pricing"
-          className="inline-flex h-9 items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black"
-        >
-          Купить
-        </Link>
+        <div className="flex items-center gap-3">
+          <a
+            href="https://t.me/ruinstar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-400 hover:bg-blue-500/30 backdrop-blur-sm transition-all duration-200 text-sm font-medium glow-effect-sm"
+          >
+            📢 Канал
+          </a>
+          <a
+            href="https://t.me/ruin_support"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/20 text-green-600 dark:text-green-400 hover:bg-green-500/30 backdrop-blur-sm transition-all duration-200 text-sm font-medium glow-effect-sm"
+          >
+            🛠️ Поддержка
+          </a>
+          <Link
+            href="/#pricing"
+            className="inline-flex h-9 items-center justify-center rounded-md bg-gradient-to-r from-blue-600/80 to-purple-600/80 backdrop-blur-sm px-4 py-2 text-sm font-medium text-white shadow transition-all duration-200 hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black glow-effect"
+          >
+            Купить
+          </Link>
+        </div>
       </div>
     </header>
   );
 }
+
 
 const AnimateOnScroll = ({ children, delay = 0, className = "", as: Component = 'div' }: { children: ReactNode, delay?: number, className?: string, as?: React.ElementType }) => {
   const { ref, inView } = useInView({

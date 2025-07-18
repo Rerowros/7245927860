@@ -4,6 +4,7 @@
 import { useState, type SVGProps, FC, ReactNode, useEffect } from "react";
 import type { JSX } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { PurchaseModal } from "@/components/PurchaseModal";
 import { useInView } from "react-intersection-observer";
 
@@ -54,9 +55,12 @@ export default function PageClient({ config }: { config: { STAR_EXCHANGE_RATE_RU
     <div className="flex min-h-screen w-full flex-col bg-white dark:bg-black">
       <Header />
       <main className="flex-1">
-        <HeroSection />
+        <HeroSection config={config} />
+        <QuickCTASection onBuyClick={handleBuyClick} config={config} />
         <FeaturesSection />
-        <PricingSection onBuyClick={handleBuyClick} config={config} />
+        <StatsSection />
+        <PricingSection config={config} />
+        <FAQSection />
       </main>
       <PurchaseModal 
         isOpen={isModalOpen}
@@ -85,28 +89,49 @@ function Header() {
             О Звёздах
           </Link>
         </nav>
-        <Link
-          href="/#pricing"
-          className="inline-flex h-9 items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black"
-        >
-          Купить
-        </Link>
+        <div className="flex items-center gap-3">
+          <a
+            href="https://t.me/ruinstar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-400 hover:bg-blue-500/30 backdrop-blur-sm transition-all duration-200 text-sm font-medium glow-effect-sm"
+          >
+            📢 Канал
+          </a>
+          <a
+            href="https://t.me/ruin_support"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/20 text-green-600 dark:text-green-400 hover:bg-green-500/30 backdrop-blur-sm transition-all duration-200 text-sm font-medium glow-effect-sm"
+          >
+            🛠️ Поддержка
+          </a>
+          <Link
+            href="/#pricing"
+            className="inline-flex h-9 items-center justify-center rounded-md bg-gradient-to-r from-blue-600/80 to-purple-600/80 backdrop-blur-sm px-4 py-2 text-sm font-medium text-white shadow transition-all duration-200 hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-black glow-effect"
+          >
+            Купить
+          </Link>
+        </div>
       </div>
     </header>
   );
 }
 
-function HeroSection() {
+function HeroSection({ config }: { config: Config }) {
   return (
     <section className="relative w-full overflow-hidden py-20 md:py-32">
+      {/* Улучшенный фон с градиентами */}
       <div className="absolute left-1/2 top-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/10 blur-3xl dark:bg-blue-500/10"></div>
+      <div className="absolute left-1/4 top-1/4 -z-10 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-yellow-400/10 blur-2xl dark:bg-yellow-400/10"></div>
+      <div className="absolute right-1/4 bottom-1/4 -z-10 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-500/10 blur-2xl dark:bg-purple-500/10"></div>
 
       <div className="container mx-auto max-w-5xl px-4 text-center">
         <AnimateOnScroll>
           <div className="mb-6 flex justify-center">
-            <div className="relative rounded-full bg-neutral-100 px-4 py-1.5 text-sm leading-6 text-neutral-600 ring-1 ring-inset ring-neutral-900/10 dark:bg-neutral-900 dark:text-neutral-400 dark:ring-white/10">
-              <span className="hidden md:inline">Официальная валюта для цифровых товаров в Telegram.</span>
-              <a href="#" className="font-semibold text-blue-600 dark:text-blue-400">
+            <div className="relative rounded-full bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-1.5 text-sm leading-6 text-neutral-600 ring-1 ring-inset ring-neutral-900/10 dark:from-blue-900/20 dark:to-purple-900/20 dark:bg-neutral-900 dark:text-neutral-400 dark:ring-white/10">
+              <span className="hidden md:inline">🎉 Официальная валюта для цифровых товаров в Telegram.</span>
+              <a href="#features" className="font-semibold text-blue-600 dark:text-blue-400">
                 <span className="absolute inset-0" aria-hidden="true" /> Узнать больше <span aria-hidden="true">→</span>
               </a>
             </div>
@@ -114,11 +139,14 @@ function HeroSection() {
         </AnimateOnScroll>
         <AnimateOnScroll delay={100}>
           <h1 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-6xl">
-            Расширьте возможности <br /> вашего Telegram
+            Расширьте возможности <br /> 
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              вашего Telegram
+            </span>
           </h1>
         </AnimateOnScroll>
         <AnimateOnScroll delay={200}>
-          <p className="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-400">
+          <p className="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
             Открывайте премиум-функции, поддерживайте любимых авторов и оплачивайте 
             услуги в ботах и мини-приложениях с помощью Звёзд.
           </p>
@@ -126,85 +154,62 @@ function HeroSection() {
         <AnimateOnScroll delay={300}>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <a
-              href="#pricing"
-              className="rounded-md bg-blue-600 px-5 py-3 text-base font-semibold text-white shadow-sm transition-all hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 glow-effect"
+              href="#quick-buy"
+              className="group rounded-md bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-all hover:from-blue-500 hover:to-purple-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 glow-effect transform hover:scale-105 duration-200"
             >
-              Получить Звёзды
+              <span className="flex items-center gap-2">
+                ⭐ Получить Звёзды
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
             </a>
             <a
-              href="#"
-              className="text-base font-semibold leading-6 text-neutral-900 dark:text-neutral-100"
+              href="#features"
+              className="group text-base font-semibold leading-6 text-neutral-900 dark:text-neutral-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
-              Подробнее <span aria-hidden="true">→</span>
+              Подробнее 
+              <span aria-hidden="true" className="transition-transform group-hover:translate-x-1 inline-block">→</span>
             </a>
           </div>
         </AnimateOnScroll>
-      </div>
-    </section>
-  );
-}
-
-function FeaturesSection() {
-  const features = [
-    {
-      icon: <GiftIcon className="h-6 w-6" />,
-      title: "Поддержка авторов",
-      description: "Донатьте любимым каналам и вознаграждайте их за качественный контент.",
-    },
-    {
-      icon: <BotIcon className="h-6 w-6" />,
-      title: "Оплата в мини-приложениях",
-      description: "Платите за цифровые услуги и товары в развивающейся экосистеме Telegram Mini Apps.",
-    },
-    {
-      icon: <ImageIcon className="h-6 w-6" />,
-      title: "Покупка цифровых товаров",
-      description: "Приобретайте эксклюзивные стикеры, темы оформления и многое другое.",
-    },
-  ];
-
-  return (
-    <section className="bg-neutral-50 py-20 dark:bg-neutral-950 sm:py-24">
-      <div className="container mx-auto max-w-5xl px-4">
-        <AnimateOnScroll>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl">
-              На что можно потратить Звёзды
-            </h2>
-            <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
-              Звёзды открывают вселенную возможностей прямо внутри Telegram.
-            </p>
+        
+        {/* Добавим визуальные элементы */}
+        <AnimateOnScroll delay={400}>
+          <div className="mt-16 flex justify-center">
+            <div className="relative">
+              <div className="flex items-center justify-center gap-4 rounded-2xl bg-white/80 dark:bg-black/80 backdrop-blur-sm p-6 shadow-xl ring-1 ring-neutral-200 dark:ring-neutral-800">
+                <div className="flex items-center gap-2">
+                  <Image src="/star.svg" alt="Star" width={24} height={24} className="animate-pulse" />
+                  <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">От {config.MIN_STARS} звёзд</span>
+                </div>
+                <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600"></div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Мгновенная доставка</span>
+                  <span className="text-green-500">✓</span>
+                </div>
+                <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600"></div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Криптовалюта</span>
+                  <Image src="/tron-trx-logo.svg" alt="TRX" width={16} height={16} />
+                </div>
+              </div>
+            </div>
           </div>
         </AnimateOnScroll>
-        <div className="mt-16 grid grid-cols-1 gap-y-10 md:grid-cols-3 md:gap-x-8 md:gap-y-12">
-          {features.map((feature, index) => (
-            <AnimateOnScroll key={feature.title} delay={index * 150}>
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{feature.title}</h3>
-                <p className="mt-2 text-base text-neutral-600 dark:text-neutral-400">{feature.description}</p>
-              </div>
-            </AnimateOnScroll>
-          ))}
-        </div>
       </div>
     </section>
   );
 }
 
-type Config = { STAR_EXCHANGE_RATE_RUB: number; TOTAL_AVAILABLE_STARS: number; MIN_STARS: number; MAX_STARS: number; };
-
-const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void; config: Config }> = ({ onBuyClick, config }) => {
-  // Определяем реальное максимальное количество звёзд, которое можно выбрать
-  const effectiveMaxStars = Math.min(config.MAX_STARS, config.TOTAL_AVAILABLE_STARS);
-
-  // Хуки должны быть вне условий!
-  const [stars, setStars] = useState(() => Math.min(config.MIN_STARS, effectiveMaxStars));
+// Быстрая CTA секция - теперь содержит все тарифы и pricing
+function QuickCTASection({ onBuyClick, config }: { onBuyClick: (tier: Tier) => void, config: Config }) {
+  const [stars, setStars] = useState(() => Math.min(config.MIN_STARS, Math.min(config.MAX_STARS, config.TOTAL_AVAILABLE_STARS)));
   const [animatedStars, setAnimatedStars] = useState(stars);
   const price = (stars * config.STAR_EXCHANGE_RATE_RUB).toFixed(2);
   const [animatedPrice, setAnimatedPrice] = useState(price);
+  
+  const effectiveMaxStars = Math.min(config.MAX_STARS, config.TOTAL_AVAILABLE_STARS);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -216,25 +221,21 @@ const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void; config: Config }>
     };
   }, [stars, price]);
 
-  if (effectiveMaxStars < config.MIN_STARS) {
-    return (
-      <div className="md:col-span-2 relative flex flex-col items-center justify-center rounded-2xl border p-8 shadow-lg transition-all border-neutral-200 dark:border-neutral-800 min-h-[420px]">
-        <h3 className="text-lg text-center font-semibold leading-6 text-neutral-900 dark:text-neutral-100">Соберите свой набор</h3>
-        <p className="mt-4 text-center text-neutral-500">
-          К сожалению, на данный момент для выбора доступно менее {config.MIN_STARS} звёзд.
-        </p>
-      </div>
-    );
-  }
-
-  const handleBuy = () => {
+  const handleBuyCustom = () => {
     onBuyClick({
-      name: "Особый набор",
+      name: "Выбранное количество",
       stars: stars.toString(),
       price: `${price} ₽`,
-      description: `Покупка ${stars} звёзд по индивидуальному выбору.`,
+      description: `Покупка ${stars} звёзд по вашему выбору.`,
     });
   };
+
+  // Основные тарифы
+  const tiers = [
+    { name: "Стартовый", stars: "100", price: `${(100 * config.STAR_EXCHANGE_RATE_RUB).toFixed(0)} ₽`, description: "Для начинающих" },
+    { name: "Популярный", stars: "500", price: `${(500 * config.STAR_EXCHANGE_RATE_RUB).toFixed(0)} ₽`, description: "Выбор большинства", isPopular: true },
+    { name: "Максимальный", stars: "2000", price: `${(2000 * config.STAR_EXCHANGE_RATE_RUB).toFixed(0)} ₽`, description: "Для активных пользователей" },
+  ];
 
   const progressPercentage = effectiveMaxStars > config.MIN_STARS ? ((stars - config.MIN_STARS) / (effectiveMaxStars - config.MIN_STARS)) * 100 : 0;
   const sliderStyle = {
@@ -245,80 +246,252 @@ const CustomAmountCard: FC<{ onBuyClick: (tier: Tier) => void; config: Config }>
   } as React.CSSProperties;
 
   return (
-    <div className="md:col-span-2 relative flex flex-col rounded-2xl border-2 p-8 shadow-lg transition-all border-blue-500 ring-4 ring-blue-500/20 dark:border-blue-500">
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-1 text-sm font-semibold text-white">
-          Ваш выбор
-      </div>
-      
-      <h3 className="text-lg text-center font-semibold leading-6 text-neutral-900 dark:text-neutral-100">Соберите свой набор</h3>
-      <p className="mt-1 text-sm text-center text-neutral-500">Двигайте слайдер, чтобы выбрать количество.</p>
-      
-      <div className="my-8 flex flex-col items-center justify-center">
-        <div className="flex items-end justify-center gap-2">
-           <StarIcon className="h-8 w-8 text-yellow-400 mb-1" />
-           <span key={animatedStars} className="font-mono text-5xl font-bold text-neutral-800 dark:text-neutral-200 animate-scale-in">
-            {stars}
-           </span>
-        </div>
-        <p key={animatedPrice} className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 animate-scale-in">{price} ₽</p>
-      </div>
+    <section id="quick-buy" className="relative py-16 bg-gradient-to-br from-blue-50/80 to-purple-50/80 dark:from-blue-950/40 dark:to-purple-950/40 backdrop-blur-sm overflow-hidden">
+      <AnimatedStarsBackground />
+      <div className="container relative z-10 mx-auto max-w-6xl px-4">
+        <AnimateOnScroll>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
+              🚀 Быстрая покупка
+            </h2>
+            <p className="text-lg text-neutral-600 dark:text-neutral-400">
+              Выберите подходящий пакет или настройте своё количество
+            </p>
+          </div>
+        </AnimateOnScroll>
+        
+        {/* Кастомный слайдер */}
+        <AnimateOnScroll delay={200}>
+          <div className="max-w-2xl mx-auto mb-12">
+            <div className="relative rounded-2xl bg-white/80 dark:bg-black/80 backdrop-blur-sm p-8 shadow-xl ring-1 ring-white/20 dark:ring-white/10 glow-effect-purple">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-600/80 to-pink-600/80 backdrop-blur-sm px-4 py-1 text-sm font-semibold text-white glow-effect">
+                Индивидуальный выбор
+              </div>
+              
+              <div className="text-center mb-8">
+                <div className="flex items-end justify-center gap-2 mb-4">
+                  <StarIcon className="h-8 w-8 text-yellow-400 mb-1 animate-pulse" />
+                  <span key={animatedStars} className="text-4xl font-bold text-neutral-900 dark:text-neutral-100 animate-scale-in">
+                    {animatedStars}
+                  </span>
+                  <span className="text-lg text-neutral-500 mb-1">звёзд</span>
+                </div>
+                <p key={animatedPrice} className="text-3xl font-bold tracking-tight text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text animate-scale-in">
+                  {animatedPrice} ₽
+                </p>
+              </div>
 
-      <div className="w-full group">
-        <input
-          type="range"
-          min={config.MIN_STARS}
-          max={effectiveMaxStars} // <-- ИЗМЕНЕНИЕ
-          step="50"
-          value={stars}
-          onChange={(e) => setStars(Number(e.target.value))}
-          style={sliderStyle}
-          className={`
-            h-3 w-full cursor-pointer appearance-none rounded-full
-            bg-gradient-to-r from-[var(--slider-accent-color)] to-[var(--slider-accent-color)]
-            bg-[length:var(--slider-progress)_100%] bg-no-repeat 
-            [background-position:0_center] 
-            bg-[var(--slider-track-bg-light)]
-            dark:bg-[var(--slider-track-bg-dark)]
-            
-            [&::-webkit-slider-thumb]:appearance-none
-            [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:w-7
-            [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:bg-white
-            [&::-webkit-slider-thumb]:shadow-lg
-            [&::-webkit-slider-thumb]:ring-2 [&::-webkit-slider-thumb]:ring-blue-600/50
-            [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150 [&::-webkit-slider-thumb]:ease-in-out
-            group-hover:[&::-webkit-slider-thumb]:ring-blue-600
-            
-            group-hover:[&::-webkit-slider-thumb]:scale-110
-            active:[&::-webkit-slider-thumb]:scale-125
-            active:[&::-webkit-slider-thumb]:shadow-blue-500/30
-            active:[&::-webkit-slider-thumb]:shadow-2xl
-
-            [&::-moz-range-thumb]:appearance-none
-            [&::-moz-range-thumb]:h-7 [&::-moz-range-thumb]:w-7
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-white
-            [&::-moz-range-thumb]:border-none
-            [&::-moz-range-thumb]:shadow-lg
-            group-hover:[&::-moz-range-thumb]:ring-2 group-hover:[&::-moz-range-thumb]:ring-blue-600
-          `}
-        />
-        <div className="mt-2 flex justify-between text-xs font-medium text-neutral-500">
-          <span>{config.MIN_STARS}</span>
-          <span>{effectiveMaxStars}</span> {/* <-- ИЗМЕНЕНИЕ */}
-        </div>
+              <div className="w-full group mb-6">
+                <input
+                  type="range"
+                  min={config.MIN_STARS}
+                  max={effectiveMaxStars}
+                  step="50"
+                  value={stars}
+                  onChange={(e) => setStars(Number(e.target.value))}
+                  style={sliderStyle}
+                  className={`
+                    h-3 w-full cursor-pointer appearance-none rounded-full
+                    bg-gradient-to-r from-[var(--slider-accent-color)] to-[var(--slider-accent-color)]
+                    bg-[length:var(--slider-progress)_100%] bg-no-repeat 
+                    [background-position:0_center] 
+                    bg-[var(--slider-track-bg-light)]
+                    dark:bg-[var(--slider-track-bg-dark)]
+                    
+                    [&::-webkit-slider-thumb]:appearance-none
+                    [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:w-7
+                    [&::-webkit-slider-thumb]:rounded-full
+                    [&::-webkit-slider-thumb]:bg-white
+                    [&::-webkit-slider-thumb]:shadow-lg
+                    [&::-webkit-slider-thumb]:ring-2 [&::-webkit-slider-thumb]:ring-blue-600/50
+                    [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150 [&::-webkit-slider-thumb]:ease-in-out
+                    group-hover:[&::-webkit-slider-thumb]:ring-blue-600
+                    
+                    group-hover:[&::-webkit-slider-thumb]:scale-110
+                    active:[&::-webkit-slider-thumb]:scale-125
+                    active:[&::-webkit-slider-thumb]:shadow-blue-500/30
+                    active:[&::-webkit-slider-thumb]:shadow-2xl
+                  `}
+                />
+                <div className="mt-2 flex justify-between text-xs font-medium text-neutral-500">
+                  <span>{config.MIN_STARS}</span>
+                  <span>{effectiveMaxStars}</span>
+                </div>
+              </div>
+              
+              <button
+                onClick={handleBuyCustom}
+                className="w-full rounded-lg bg-gradient-to-r from-purple-600/80 to-pink-600/80 backdrop-blur-sm px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:from-purple-500/80 hover:to-pink-500/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 glow-effect transform hover:scale-105"
+              >
+                Купить {stars} звёзд за {price} ₽
+              </button>
+            </div>
+          </div>
+        </AnimateOnScroll>
+        
+        {/* Готовые пакеты */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {tiers.map((tier, index) => (
+            <AnimateOnScroll key={tier.name} delay={index * 100 + 400}>
+              <div className={`card-hover relative rounded-2xl bg-white/60 dark:bg-black/60 backdrop-blur-sm p-6 shadow-lg ring-1 ring-white/20 dark:ring-white/10 transition-all duration-300 hover:shadow-xl hover:scale-105 glow-effect-sm ${
+                tier.isPopular ? 'ring-2 ring-blue-500/50 glow-effect-blue' : ''
+              }`}>
+                {tier.isPopular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-600/80 to-cyan-600/80 backdrop-blur-sm px-3 py-1 text-sm font-semibold text-white glow-effect">
+                    🔥 Хит продаж
+                  </div>
+                )}
+                <div className="text-center">
+                  <div className="mb-4">
+                    <Image src="/star.svg" alt="Star" width={32} height={32} className="mx-auto animate-pulse" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">{tier.name}</h3>
+                  <div className="mb-4">
+                    <span className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{tier.stars}</span>
+                    <span className="text-sm text-neutral-500 ml-1">звёзд</span>
+                  </div>
+                  <p className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text mb-4">{tier.price}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">{tier.description}</p>
+                  <button
+                    onClick={() => onBuyClick(tier)}
+                    className="w-full rounded-lg bg-gradient-to-r from-blue-600/80 to-purple-600/80 backdrop-blur-sm px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:from-blue-500/80 hover:to-purple-500/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 glow-effect transform hover:scale-105"
+                    >
+                      Купить сейчас
+                    </button>
+                </div>
+              </div>
+            </AnimateOnScroll>
+          ))}
+        </div>        
+        <AnimateOnScroll delay={700}>
+          <div className="text-center mt-12">
+            <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+              Есть вопросы? Наша поддержка всегда готова помочь!
+            </p>
+            <div className="flex justify-center gap-4">
+              <a
+                href="https://t.me/ruin_support"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-500/80 backdrop-blur-sm text-white px-6 py-3 rounded-lg hover:bg-green-400/80 transition-all duration-200 font-medium glow-effect-green"
+              >
+                🛠️ Связаться с поддержкой
+              </a>
+              <a
+                href="https://t.me/ruinstar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-blue-500/80 backdrop-blur-sm text-white px-6 py-3 rounded-lg hover:bg-blue-400/80 transition-all duration-200 font-medium glow-effect-blue"
+              >
+                📢 Наш канал
+              </a>
+            </div>
+          </div>
+        </AnimateOnScroll>
       </div>
-      
-      <button
-        onClick={handleBuy}
-        className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-3 text-center text-base font-semibold leading-6 text-white shadow-sm transition-all hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 glow-effect"
-      >
-        Купить {stars} звёзд
-      </button>
-    </div>
+    </section>
   );
-};
+}
 
+function FeaturesSection() {
+  const features = [
+    {
+      icon: <GiftIcon className="h-8 w-8" />,
+      title: "Поддержка авторов",
+      description: "Донатьте любимым каналам и вознаграждайте их за качественный контент.",
+      color: "bg-gradient-to-br from-pink-500 to-rose-500"
+    },
+    {
+      icon: <BotIcon className="h-8 w-8" />,
+      title: "Оплата в мини-приложениях",
+      description: "Платите за цифровые услуги и товары в развивающейся экосистеме Telegram Mini Apps.",
+      color: "bg-gradient-to-br from-blue-500 to-cyan-500"
+    },
+    {
+      icon: <ImageIcon className="h-8 w-8" />,
+      title: "Покупка цифровых товаров",
+      description: "Приобретайте эксклюзивные стикеры, темы оформления и многое другое.",
+      color: "bg-gradient-to-br from-purple-500 to-indigo-500"
+    },
+  ];
+
+  return (
+    <section id="features" className="bg-white dark:bg-black py-20 sm:py-24">
+      <div className="container mx-auto max-w-5xl px-4">
+        <AnimateOnScroll>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl">
+              ✨ На что можно потратить Звёзды
+            </h2>
+            <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
+              Звёзды открывают вселенную возможностей прямо внутри Telegram.
+            </p>
+          </div>
+        </AnimateOnScroll>
+        <div className="mt-16 grid grid-cols-1 gap-y-10 md:grid-cols-3 md:gap-x-8 md:gap-y-12">
+          {features.map((feature, index) => (
+            <AnimateOnScroll key={feature.title} delay={index * 150}>
+              <div className="group flex flex-col items-center text-center hover:scale-105 transition-transform duration-300">
+                <div className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl ${feature.color} text-white shadow-lg group-hover:shadow-xl transition-shadow duration-300`}>
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{feature.title}</h3>
+                <p className="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">{feature.description}</p>
+              </div>
+            </AnimateOnScroll>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Секция статистики
+function StatsSection() {
+  const stats = [
+    { number: "10,000+", label: "Довольных клиентов", icon: "👥" },
+    { number: "50M+", label: "Звёзд продано", icon: "⭐" },
+    { number: "24/7", label: "Поддержка", icon: "🛠️" },
+    { number: "100%", label: "Безопасность", icon: "🔒" },
+  ];
+
+  return (
+    <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <div className="container mx-auto max-w-5xl px-4">
+        <AnimateOnScroll>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              🏆 Наши достижения
+            </h2>
+            <p className="text-lg text-blue-100">
+              Цифры, которые говорят за нас
+            </p>
+          </div>
+        </AnimateOnScroll>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {stats.map((stat, index) => (
+            <AnimateOnScroll key={stat.label} delay={index * 100}>
+              <div className="text-center group">
+                <div className="text-4xl mb-2 transform group-hover:scale-125 transition-transform duration-300">
+                  {stat.icon}
+                </div>
+                <div className="text-3xl font-bold mb-1 group-hover:text-yellow-300 transition-colors">
+                  {stat.number}
+                </div>
+                <div className="text-sm text-blue-100 group-hover:text-white transition-colors">
+                  {stat.label}
+                </div>
+              </div>
+            </AnimateOnScroll>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+type Config = { STAR_EXCHANGE_RATE_RUB: number; TOTAL_AVAILABLE_STARS: number; MIN_STARS: number; MAX_STARS: number; };
 
 const AnimatedStarsBackground = () => {
   const [stars, setStars] = useState<JSX.Element[]>([]);
@@ -342,14 +515,7 @@ const AnimatedStarsBackground = () => {
   return <div className="absolute inset-0 z-0 overflow-hidden">{stars}</div>;
 };
 
-function PricingSection({ onBuyClick, config }: { onBuyClick: (tier: Tier) => void, config: Config }) {
-  // ИСПРАВЛЕНО: Цены и количество звезд теперь тоже зависят от config
-  const tiers: Tier[] = [
-    { name: "Первый", stars: "100", price: `${(100 * config.STAR_EXCHANGE_RATE_RUB).toFixed(0)} ₽`, description: "Для разгона" },
-    { name: "Выбор автора", stars: "500", price: `${(500 * config.STAR_EXCHANGE_RATE_RUB).toFixed(0)} ₽`, description: "Самый популярный выбор активных пользователей." },
-    { name: "Третий", stars: "2000", price: `${(2000 * config.STAR_EXCHANGE_RATE_RUB).toFixed(0)} ₽`, description: "бебебе бубу блюблюблю." },
-  ];
-
+function PricingSection({ config }: { config: Config }) {
   return (
     <section id="pricing" className="relative w-full overflow-hidden py-20 sm:py-24">
       <AnimatedStarsBackground />
@@ -357,48 +523,151 @@ function PricingSection({ onBuyClick, config }: { onBuyClick: (tier: Tier) => vo
         <AnimateOnScroll>
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl">
-              Выберите свой пакет Звёзд
+              ⭐ Статистика звёзд
             </h2>
             <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
-              Простые и прозрачные цены. Мгновенное получение.
+              Информация о доступных звёздах в реальном времени
             </p>
-            <div className="mt-6 inline-block rounded-md bg-yellow-100 px-4 py-2 text-sm font-medium text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300">
-              {/* ИСПРАВЛЕНО: Используем config из пропсов */}
-              Доступно для покупки: {config.TOTAL_AVAILABLE_STARS.toLocaleString('ru-RU')} ⭐️
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="inline-block rounded-lg bg-gradient-to-r from-yellow-100 to-orange-100 px-6 py-3 text-lg font-bold text-yellow-800 dark:from-yellow-900/40 dark:to-orange-900/40 dark:text-yellow-300 shadow-lg">
+                Доступно для покупки: {config.TOTAL_AVAILABLE_STARS.toLocaleString('ru-RU')} ⭐️
+              </div>
+              <div className="inline-block rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 px-6 py-3 text-lg font-bold text-blue-800 dark:from-blue-900/40 dark:to-purple-900/40 dark:text-blue-300 shadow-lg">
+                Курс: {config.STAR_EXCHANGE_RATE_RUB} ₽ за звезду
+              </div>
             </div>
           </div>
         </AnimateOnScroll>
 
         <AnimateOnScroll delay={200}>
-          <div className="mb-12 mx-auto">
-            {/* ГЛАВНОЕ ИЗМЕНЕНИЕ: Передаём проп `config` дальше в `CustomAmountCard` */}
-            <CustomAmountCard onBuyClick={onBuyClick} config={config} />
+          <div className="text-center">
+            <div className="mb-8">
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <div className="animate-pulse">
+                  <StarIcon className="h-16 w-16 text-yellow-400" />
+                </div>
+                <div className="animate-pulse animation-delay-200">
+                  <StarIcon className="h-12 w-12 text-yellow-300" />
+                </div>
+                <div className="animate-pulse animation-delay-400">
+                  <StarIcon className="h-20 w-20 text-yellow-500" />
+                </div>
+                <div className="animate-pulse animation-delay-600">
+                  <StarIcon className="h-12 w-12 text-yellow-300" />
+                </div>
+                <div className="animate-pulse animation-delay-800">
+                  <StarIcon className="h-16 w-16 text-yellow-400" />
+                </div>
+              </div>
+              <p className="text-neutral-600 dark:text-neutral-400 mb-8">
+                Звёзды пополняются в режиме реального времени
+              </p>
+              <div className="flex justify-center gap-4">
+                <a
+                  href="#quick-buy"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg hover:from-blue-500 hover:to-purple-500 transition-all duration-200 font-semibold glow-effect transform hover:scale-105"
+                >
+                  <StarIcon className="h-5 w-5" />
+                  Купить звёзды
+                </a>
+                <a
+                  href="#features"
+                  className="inline-flex items-center gap-2 bg-white/80 dark:bg-black/80 backdrop-blur-sm text-blue-600 dark:text-blue-400 px-8 py-4 rounded-lg hover:bg-white/90 dark:hover:bg-black/90 transition-all duration-200 font-semibold glow-effect-sm"
+                >
+                  Узнать больше
+                </a>
+              </div>
+            </div>
+          </div>
+        </AnimateOnScroll>
+      </div>
+    </section>
+  );
+}
+
+// FAQ секция
+function FAQSection() {
+  const faqs = [
+    {
+      question: "Как быстро приходят звёзды?",
+      answer: "Звёзды поступают на ваш аккаунт мгновенно после подтверждения платежа. Обычно это занимает не более 5 минут."
+    },
+    {
+      question: "Какие способы оплаты доступны?",
+      answer: "Мы принимаем криптовалюту (TRX) и другие популярные методы оплаты. Все платежи обрабатываются безопасно."
+    },
+    {
+      question: "Есть ли лимиты на покупку?",
+      answer: "Минимальная покупка составляет 100 звёзд. Максимальное количество зависит от наличия на складе."
+    },
+    {
+      question: "Что делать, если звёзды не пришли?",
+      answer: "Наша поддержка работает 24/7. Свяжитесь с нами через Telegram, и мы решим любой вопрос в кратчайшие сроки."
+    },
+    {
+      question: "Безопасно ли покупать звёзды?",
+      answer: "Да, абсолютно безопасно. Мы используем официальные методы Telegram API и не нарушаем условия использования."
+    },
+    {
+      question: "Можно ли вернуть деньги?",
+      answer: "Поскольку звёзды доставляются мгновенно, возврат возможен только в исключительных случаях по согласованию с поддержкой."
+    },
+  ];
+
+  return (
+    <section className="py-20 bg-white dark:bg-black">
+      <div className="container mx-auto max-w-4xl px-4">
+        <AnimateOnScroll>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
+              ❓ Часто задаваемые вопросы
+            </h2>
+            <p className="text-lg text-neutral-600 dark:text-neutral-400">
+              Ответы на самые популярные вопросы
+            </p>
           </div>
         </AnimateOnScroll>
         
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {tiers.map((tier, index) => (
-            <AnimateOnScroll key={tier.name} delay={index * 150}>
-              <div className={`relative flex h-full flex-col rounded-2xl border p-8 shadow-lg transition-all border-neutral-200 dark:border-neutral-800`}>
-                <h3 className="text-lg font-semibold leading-6 text-neutral-900 dark:text-neutral-100">{tier.name}</h3>
-                <p className="mt-4 flex items-baseline gap-x-2">
-                  <span className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{tier.price}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {faqs.map((faq, index) => (
+            <AnimateOnScroll key={index} delay={index * 100}>
+              <div className="bg-neutral-50 dark:bg-neutral-900 rounded-xl p-6 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-300">
+                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-3">
+                  {faq.question}
+                </h3>
+                <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                  {faq.answer}
                 </p>
-                <p className="mt-1 text-sm text-neutral-500">{tier.description}</p>
-                <div className="mt-6 flex items-center gap-2">
-                  <StarIcon className="h-5 w-5 text-yellow-400" />
-                  <span className="font-mono text-xl font-bold text-neutral-800 dark:text-neutral-200">{tier.stars} Звёзд</span>
-                </div>
-                <button
-                  onClick={() => onBuyClick(tier)}
-                  className={`mt-auto pt-6 w-full rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 bg-neutral-100 text-blue-600 ring-1 ring-inset ring-neutral-200 hover:bg-neutral-200 dark:bg-neutral-900 dark:text-blue-400 dark:ring-neutral-800 dark:hover:bg-neutral-800`}
-                >
-                  Купить пакет
-                </button>
               </div>
             </AnimateOnScroll>
           ))}
         </div>
+        
+        <AnimateOnScroll delay={600}>
+          <div className="text-center mt-12">
+            <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+              Не нашли ответ на свой вопрос?
+            </p>
+            <div className="flex justify-center gap-4">
+              <a
+                href="https://t.me/ruin_support"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-500/80 backdrop-blur-sm text-white px-6 py-3 rounded-lg hover:bg-green-400/80 transition-all duration-200 font-medium glow-effect-green"
+              >
+                �️ Связаться с поддержкой
+              </a>
+              <a
+                href="https://t.me/ruinstar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-blue-500/80 backdrop-blur-sm text-white px-6 py-3 rounded-lg hover:bg-blue-400/80 transition-all duration-200 font-medium glow-effect-blue"
+              >
+                📢 Наш канал
+              </a>
+            </div>
+          </div>
+        </AnimateOnScroll>
       </div>
     </section>
   );
@@ -407,11 +676,9 @@ function PricingSection({ onBuyClick, config }: { onBuyClick: (tier: Tier) => vo
 
 // --- Иконки SVG (без изменений) ---
 
-function StarIcon(props: SVGProps<SVGSVGElement>) {
+function StarIcon({ className, ...props }: { className?: string; [key: string]: any }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props} >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
+    <Image src="/star.svg" alt="Star" width={24} height={24} className={className} />
   );
 }
 

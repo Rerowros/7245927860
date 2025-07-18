@@ -1,7 +1,3 @@
-
-> 7245927860@0.1.0 npx
-> prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script
-
 -- CreateTable
 CREATE TABLE "Setting" (
     "id" TEXT NOT NULL PRIMARY KEY,
@@ -18,6 +14,8 @@ CREATE TABLE "Order" (
     "stars" INTEGER NOT NULL,
     "price" REAL NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "paymentMethod" TEXT NOT NULL,
+    "invoiceId" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -25,3 +23,5 @@ CREATE TABLE "Order" (
 -- CreateIndex
 CREATE UNIQUE INDEX "Setting_key_key" ON "Setting"("key");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Order_invoiceId_key" ON "Order"("invoiceId");

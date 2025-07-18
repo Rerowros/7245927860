@@ -28,7 +28,30 @@ export async function sendMessageToAdmin(order: Order, paymentMethod: string) {
   const orderId = order.id; // ID в `code`, экранировать не нужно
   const orderDate = escapeMarkdownV2(new Date(order.createdAt).toLocaleString("ru-RU")); // Экранируем дату
 
-  const text = `
+  let text: string;
+  let inline_keyboard: any[][];
+
+  // Различные типы сообщений в зависимости от способа оплаты
+  if (paymentMethod === 'CryptoBot-Paid') {
+    // Уведомление о подтвержденном платеже
+    text = `
+*Платеж подтвержден \\!* ✅💰
+
+*Пользователь:* [${userName}](https://t.me/${userUsername}) \\(\`@${userUsername}\`\\)
+*Заказ:* *${starsCount}* ⭐️ за *${orderPrice}* ₽
+*Способ оплаты:* CryptoBot
+*ID заказа:* \`${orderId}\`
+*Время:* ${orderDate}
+
+💡 *Оплата успешно получена\\! Можете выдать звёзды пользователю\\.*
+    `;
+    
+    inline_keyboard = [
+      [{ text: "✅ Звёзды выданы", callback_data: `complete_order_${order.id}` }],
+    ];
+  } else if (paymentMethod === 'LZT') {
+    // Уведомление о заказе через LZT (ручная оплата)
+    text = `
 *Новый заказ \\!* 🛒
 
 *Пользователь:* [${userName}](https://t.me/${userUsername}) \\(\`@${userUsername}\`\\)
@@ -36,12 +59,30 @@ export async function sendMessageToAdmin(order: Order, paymentMethod: string) {
 *Способ оплаты:* ${payMethod}
 *ID заказа:* \`${orderId}\`
 *Время:* ${orderDate}
-  `;
-  // --- КОНЕЦ ИСПРАВЛЕНИЙ ---
 
-  const inline_keyboard = [
-    [{ text: "✅ Выполнено", callback_data: `complete_order_${order.id}` }],
-  ];
+⚠️ *Ожидает подтверждения оплаты\\.*
+    `;
+    
+    inline_keyboard = [
+      [{ text: "✅ Выполнено", callback_data: `complete_order_${order.id}` }],
+    ];
+  } else {
+    // Старое сообщение для совместимости
+    text = `
+*Новый заказ \\!* 🛒
+
+*Пользователь:* [${userName}](https://t.me/${userUsername}) \\(\`@${userUsername}\`\\)
+*Заказ:* *${starsCount}* ⭐️ за *${orderPrice}* ₽
+*Способ оплаты:* ${payMethod}
+*ID заказа:* \`${orderId}\`
+*Время:* ${orderDate}
+    `;
+    
+    inline_keyboard = [
+      [{ text: "✅ Выполнено", callback_data: `complete_order_${order.id}` }],
+    ];
+  }
+  // --- КОНЕЦ ИСПРАВЛЕНИЙ ---
 
   try {
     const response = await fetch(`${API_URL}/sendMessage`, {

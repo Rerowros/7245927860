@@ -3,17 +3,6 @@
 
 import { useState, useEffect, type FC, FormEvent } from "react";
 import type { SVGProps } from "react";
-import Image from "next/image";
-import { 
-  SiBitcoin, 
-  SiTether, 
-  SiEthereum, 
-  SiBinance, 
-  SiLitecoin,
-  SiPolygon,
-  SiDogecoin
-} from "react-icons/si";
-import { FaTelegram } from "react-icons/fa";
 
 // Типы для нашего модального окна
 type Tier = {
@@ -44,6 +33,7 @@ function LoaderIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 function CryptoBotIcon(props: SVGProps<SVGSVGElement>) {
+  // Простая иконка для примера
   return <svg viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2.5-3.5h5v-2h-5v2zm0-3h5v-2h-5v2zm0-3h5v-2h-5v2z"></path></svg>;
 }
 
@@ -67,32 +57,59 @@ export const PurchaseModal: FC<PurchaseModalProps> = ({ isOpen, onClose, tier })
   const [orderId, setOrderId] = useState<string>('');
 // Иконки криптовалют
 const CurrencyIcon = ({ currency, className = "h-6 w-6" }: { currency: string; className?: string }) => {
-    const iconProps = { className };
-    
-    switch (currency) {
-        case 'TON':
-            return (
-                <div className={`${className} relative rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-xs`}>
-                    <FaTelegram className="text-white" />
-                </div>
-            );
-        case 'USDT':
-            return <SiTether {...iconProps} className={`${className} text-green-500`} />;
-        case 'BTC':
-            return <SiBitcoin {...iconProps} className={`${className} text-orange-500`} />;
-        case 'ETH':
-            return <SiEthereum {...iconProps} className={`${className} text-blue-400`} />;
-        case 'BNB':
-            return <SiBinance {...iconProps} className={`${className} text-yellow-500`} />;
-        case 'TRX':
-            return (
-                <Image src="/tron-trx-logo.svg" alt="TRX" width={24} height={24} className={className} />
-            );
-        case 'LTC':
-            return <SiLitecoin {...iconProps} className={`${className} text-gray-400`} />;
-        default:
-            return <SiBitcoin {...iconProps} className={`${className} text-orange-500`} />;
-    }
+    const icons = {
+        TON: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7v10c0 5.55 3.84 9.739 9 11 5.16-1.261 9-5.45 9-11V7l-10-5z" fill="#0088cc"/>
+                <path d="M8 12h8v2H8z" fill="white"/>
+            </svg>
+        ),
+        USDT: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="#26a17b"/>
+                <path d="M12 6v12M8 10h8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+        ),
+        BTC: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="#f7931a"/>
+                <path d="M8 12h8M10 8h4M10 16h4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+        ),
+        ETH: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="#627eea"/>
+                <path d="M12 3l5 8-5 3-5-3 5-8z" fill="white"/>
+            </svg>
+        ),
+        BNB: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="#f3ba2f"/>
+                <path d="M8 8h8v8H8z" fill="white"/>
+            </svg>
+        ),
+        TRX: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="#ff060a"/>
+                <path d="M8 8l8 4-8 4V8z" fill="white"/>
+            </svg>
+        ),
+        LTC: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="#bfbbbb"/>
+                <path d="M8 6v8h8M8 12h6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+        ),
+        USDC: () => (
+            <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="#2775ca"/>
+                <path d="M8 12h8M12 8v8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+        ),
+    };
+
+    const Icon = icons[currency as keyof typeof icons];
+    return Icon ? <Icon /> : <div className={`${className} bg-gray-400 rounded-full`} />;
 };
 
 // Компонент для кнопки выбора валюты
@@ -100,19 +117,16 @@ const CurrencyButton = ({
     currency, 
     selected, 
     onClick,
-    isLoading = false,
-    minAmount = 0
+    isLoading = false
 }: { 
     currency: string; 
     selected: boolean; 
     onClick: () => void; 
     isLoading?: boolean;
-    minAmount?: number;
 }) => (
     <button
         onClick={onClick}
         disabled={isLoading}
-        title={`Минимальная сумма: ${minAmount} ${currency}`}
         className={`group relative p-3 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 ${
             selected 
                 ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
@@ -129,11 +143,6 @@ const CurrencyButton = ({
                 )}
             </div>
             <span className="text-sm font-medium">{currency}</span>
-            {minAmount > 0 && (
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                    мин. {minAmount}
-                </span>
-            )}
         </div>
         {selected && !isLoading && (
             <div className="absolute inset-0 bg-white/20 rounded-xl animate-pulse"></div>
@@ -164,7 +173,6 @@ const CurrencyButton = ({
         const updatePaymentAmount = async () => {
             if (tier && selectedCurrency) {
                 setIsLoadingRate(true);
-                setError(null); // Сбрасываем предыдущие ошибки
                 try {
                     const priceInRub = parseFloat(tier.price.replace(/[^\d.]/g, ''));
                     const rate = await getExchangeRate(selectedCurrency);
@@ -172,32 +180,14 @@ const CurrencyButton = ({
                         const amount = priceInRub / rate;
                         setPaymentAmount(amount.toFixed(6));
                         setExchangeRate(rate);
-                        
-                        // Проверяем минимальную сумму
-                        const minAmounts: Record<string, number> = {
-                            BTC: 0.01,
-                            ETH: 0.0001,
-                            USDT: 1,
-                            TON: 0.4,
-                            BNB: 0.001,
-                            TRX: 4,
-                            LTC: 0.01,
-                        };
-                        
-                        const minAmount = minAmounts[selectedCurrency] || 0.01;
-                        if (amount < minAmount) {
-                            setError(`Сумма слишком мала для оплаты в ${selectedCurrency}. Минимум: ${minAmount} ${selectedCurrency}`);
-                        }
                     } else {
                         setPaymentAmount('');
                         setExchangeRate(0);
-                        setError('Не удалось получить курс обмена');
                     }
                 } catch (error) {
                     console.error('Error updating payment amount:', error);
                     setPaymentAmount('');
                     setExchangeRate(0);
-                    setError('Ошибка при получении курса валют');
                 } finally {
                     setIsLoadingRate(false);
                 }
@@ -289,9 +279,7 @@ const CurrencyButton = ({
         let errorMessage = "Не удалось создать заказ";
         
         if (data.error) {
-          if (data.error.includes("Сумма слишком мала")) {
-            errorMessage = data.error; // Отображаем точное сообщение о минимальной сумме
-          } else if (data.error.includes("AMOUNT_INVALID")) {
+          if (data.error.includes("AMOUNT_INVALID")) {
             errorMessage = "Недопустимая сумма для оплаты. Проверьте выбранную валюту и сумму заказа.";
           } else if (data.error.includes("CURRENCY_NOT_SUPPORTED")) {
             errorMessage = "Выбранная валюта не поддерживается. Попробуйте другую валюту.";
@@ -434,42 +422,16 @@ const CurrencyButton = ({
                                 )}
                             </div>
                         </label>
-                        <div className="space-y-3">
-                            {/* Первая строка - 4 валюты */}
-                            <div className="grid grid-cols-4 gap-3">
-                                {[
-                                    { currency: 'TON', min: 1 },
-                                    { currency: 'USDT', min: 1 },
-                                    { currency: 'BTC', min: 0.01 },
-                                    { currency: 'ETH', min: 0.01 }
-                                ].map(({ currency, min }) => (
-                                    <CurrencyButton
-                                        key={currency}
-                                        currency={currency}
-                                        selected={selectedCurrency === currency}
-                                        onClick={() => setSelectedCurrency(currency)}
-                                        isLoading={selectedCurrency === currency && isLoadingRate}
-                                        minAmount={min}
-                                    />
-                                ))}
-                            </div>
-                            {/* Вторая строка - 3 валюты по центру */}
-                            <div className="grid grid-cols-3 gap-3 max-w-xs mx-auto">
-                                {[
-                                    { currency: 'BNB', min: 0.1 },
-                                    { currency: 'TRX', min: 100 },
-                                    { currency: 'LTC', min: 0.1 }
-                                ].map(({ currency, min }) => (
-                                    <CurrencyButton
-                                        key={currency}
-                                        currency={currency}
-                                        selected={selectedCurrency === currency}
-                                        onClick={() => setSelectedCurrency(currency)}
-                                        isLoading={selectedCurrency === currency && isLoadingRate}
-                                        minAmount={min}
-                                    />
-                                ))}
-                            </div>
+                        <div className="grid grid-cols-4 gap-3">
+                            {['TON', 'USDT', 'BTC', 'ETH', 'BNB', 'TRX', 'LTC', 'USDC'].map((currency) => (
+                                <CurrencyButton
+                                    key={currency}
+                                    currency={currency}
+                                    selected={selectedCurrency === currency}
+                                    onClick={() => setSelectedCurrency(currency)}
+                                    isLoading={selectedCurrency === currency && isLoadingRate}
+                                />
+                            ))}
                         </div>
                     </div>
 
@@ -526,21 +488,9 @@ const CurrencyButton = ({
                         </div>
                     </div>
 
-                    {/* Отображение ошибки, если есть */}
-                    {error && (
-                        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700">
-                            <div className="flex items-center gap-2">
-                                <svg className="h-5 w-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
-                            </div>
-                        </div>
-                    )}
-
                     <div className="mt-6">
                         <button 
-                            disabled={isLoading || isLoadingRate || !paymentAmount || !!error} 
+                            disabled={isLoading || isLoadingRate || !paymentAmount} 
                             onClick={() => handlePayment("CryptoBot")} 
                             className="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white shadow-lg transition-all duration-300 hover:from-blue-600 hover:to-purple-700 hover:shadow-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed"
                         >

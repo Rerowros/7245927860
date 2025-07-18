@@ -20,7 +20,13 @@ model Order {
   telegramAvatarUrl String
   stars             Int
   price             Float
+  fiatCurrency      String   @default("RUB")
+  cryptoCurrency    String?
+  cryptoAmount      Float?
+  exchangeRate      Float?
   status            String   @default("PENDING")
+  paymentMethod     String
+  invoiceId         String?  @unique
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
