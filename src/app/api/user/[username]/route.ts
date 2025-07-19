@@ -44,12 +44,12 @@ async function getClient() {
     return telegramClient;
 }
 
+
 export async function GET(
     req: NextRequest,
-    context: { params: Promise<{ username: string }> } // params как Promise
+    context: { params: { username: string } } // params как обычный объект
 ) {
-    // Next.js требует await для params
-    const { username: rawUsername } = await context.params;
+    const { username: rawUsername } = context.params;
 
     if (!rawUsername) {
         return NextResponse.json({ success: false, error: "Username is required" }, { status: 400 });

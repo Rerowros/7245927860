@@ -5,8 +5,8 @@ const input = require("input");
 
 // Put your API ID and Hash here.
 // It's okay to have them here just for this one-time script.
-const apiId = 0; // <-- REPLACE WITH YOUR REAL API ID
-const apiHash = "0"; // <-- REPLACE WITH YOUR REAL API HASH
+const apiId = 23919434; // <-- REPLACE WITH YOUR REAL API ID
+const apiHash = "afac0d6c633615f8d46fe1255c5d5efc"; // <-- REPLACE WITH YOUR REAL API HASH
 
 (async () => {
   console.log("Starting script to generate Telegram session string...");
