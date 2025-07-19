@@ -3,33 +3,52 @@ const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 const input = require("input");
 
-// Put your API ID and Hash here.
-// It's okay to have them here just for this one-time script.
-const apiId = 23919434; // <-- REPLACE WITH YOUR REAL API ID
-const apiHash = "afac0d6c633615f8d46fe1255c5d5efc"; // <-- REPLACE WITH YOUR REAL API HASH
+// Читаем API ID и Hash из переменных окружения, переданных из bash-скрипта
+const apiIdStr = process.env.TG_API_ID;
+const apiHash = process.env.TG_API_HASH;
+
+// Проверяем, что переменные были переданы
+if (!apiIdStr || !apiHash) {
+  console.error(
+    "Ошибка: Переменные окружения TG_API_ID и TG_API_HASH должны быть установлены."
+  );
+  process.exit(1); // Выходим с ошибкой
+}
+
+const apiId = parseInt(apiIdStr);
+
+if (isNaN(apiId)) {
+  console.error("Ошибка: TG_API_ID должен быть числом.");
+  process.exit(1);
+}
 
 (async () => {
-  console.log("Starting script to generate Telegram session string...");
-  const stringSession = new StringSession(""); // Start with an empty session
+  // Сообщения для пользователя выводим в stderr, чтобы не мешать захвату сессии
+  console.error("Запуск скрипта для генерации сессии Telegram...");
+  const stringSession = new StringSession("");
 
   const client = new TelegramClient(stringSession, apiId, apiHash, {
     connectionRetries: 5,
   });
 
   await client.start({
-    phoneNumber: async () => await input.text("Please enter your phone number (e.g., +1234567890): "),
-    password: async () => await input.text("Please enter your 2FA password (if you have one): "),
-    phoneCode: async () => await input.text("Please enter the code you received from Telegram: "),
-    onError: (err) => console.log(err),
+    phoneNumber: async () =>
+      await input.text(
+        "Введите ваш номер телефона (например, +1234567890): "
+      ),
+    password: async () =>
+      await input.text("Введите ваш 2FA пароль (если есть): "),
+    phoneCode: async () =>
+      await input.text("Введите код, полученный от Telegram: "),
+    onError: (err) => console.error(err),
   });
 
-  console.log("\n✅ You are now logged in.");
-  console.log("Your session string is:");
+  console.error("\n✅ Вход выполнен успешно.");
+  console.error("Строка сессии будет захвачена автоматически.");
 
-  // The session string is now filled, and we can save it.
-  // It will look like a long string of random characters.
+  // ВАЖНО: Выводим ТОЛЬКО строку сессии в stdout.
+  // Bash-скрипт захватит именно этот вывод.
   console.log(client.session.save());
 
-  console.log("\n📋 Copy the entire string above and paste it into your .env.local file as TELEGRAM_SESSION.");
   await client.disconnect();
 })();
